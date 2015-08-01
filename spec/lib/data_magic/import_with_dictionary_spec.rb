@@ -89,7 +89,6 @@ describe "DataMagic #import_with_dictionary" do
   end
   context "with options" do
     before(:all) do
-      DataMagic::Config.logger.info "===== before :all"
       DataMagic.destroy
       ENV['DATA_PATH'] = './spec/fixtures/import_with_options'
       DataMagic.init(load_now: true)
@@ -105,4 +104,21 @@ describe "DataMagic #import_with_dictionary" do
       expect(result).to eq(expected)
     end
   end
+  context "with types" do
+    before(:all) do
+      DataMagic.destroy
+      ENV['DATA_PATH'] = './spec/fixtures/import_with_types'
+      DataMagic.init(load_now: true)
+    end
+    after(:all) do
+      DataMagic.destroy
+    end
+    it "can index all columns and apply dictionary mapping to some" do
+      result = DataMagic.search({state:'NY'}, api: 'cities')
+      expected["results"] = [{"state"=>"NY", "name"=>"New York",
+                              "info"=>{"population"=>8175133}}]
+      expect(result).to eq(expected)
+    end
+  end
+
 end
